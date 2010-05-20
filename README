@@ -1,0 +1,15 @@
+Cakeforms 0.1
+***********************************
+
+Features
+============
+* Allow simple form creation via jQuery UI
+* Field Validation
+* Per Form Recipients
+* Database Tracking
+* CSV Export
+
+Coming Soon
+=============
+* Multi-page forms
+* Autoresponder
