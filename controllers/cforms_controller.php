@@ -13,7 +13,6 @@ class CformsController extends CformsAppController {
 			if ($this->Cform->saveAll($this->data)) {
 				unset($this->data);
 				$this->Session->setFlash(__('The Form has been saved', true));
-				//$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The Cform could not be saved. Please, try again.', true));
 			}
@@ -34,38 +33,28 @@ class CformsController extends CformsAppController {
 		$this->set('cforms', $this->paginate());
 	}
 
-	function admin_view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Cform', true));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->set('cform', $this->Cform->read(null, $id));
-	}
-
 	function admin_add() {
 		if (!empty($this->data)) {
 			$this->Cform->create();
 			if ($this->Cform->save($this->data)) {
-				$this->Session->setFlash(__('The Cform has been saved', true));
-				$this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('The Form has been created', true));
+				$this->redirect(array('action' => 'edit', $this->Cform->id));
 			} else {
-				$this->Session->setFlash(__('The Cform could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The From could not be created. Please, try again.', true));
 			}
 		}
-		$nexts = $this->Cform->Next->find('list');
-		$this->set(compact('nexts'));
 	}
 
 	function admin_delete($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for Cform', true));
+			$this->Session->setFlash(__('Invalid id for Form', true));
 			$this->redirect(array('action' => 'index'));
 		}
 		if ($this->Cform->del($id)) {
-			$this->Session->setFlash(__('Cform deleted', true));
+			$this->Session->setFlash(__('Form deleted', true));
 			$this->redirect(array('action' => 'index'));
 		}
-		$this->Session->setFlash(__('The Cform could not be deleted. Please, try again.', true));
+		$this->Session->setFlash(__('The Form could not be deleted. Please, try again.', true));
 		$this->redirect(array('action' => 'index'));
 	}
 

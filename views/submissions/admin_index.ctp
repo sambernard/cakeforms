@@ -1,3 +1,4 @@
+<?php echo $cform->insert();?>
 <div class="submissions index">
 <h2><?php __('Submissions');?></h2>
 <p>
@@ -48,13 +49,4 @@ foreach ($submissions as $submission):
 	<?php echo $paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>
  | 	<?php echo $paginator->numbers();?>
 	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class' => 'disabled'));?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('New Submission', true), array('action' => 'add')); ?></li>
-		<li><?php echo $html->link(__('List Cforms', true), array('controller' => 'cforms', 'action' => 'index')); ?> </li>
-		<li><?php echo $html->link(__('New Cform', true), array('controller' => 'cforms', 'action' => 'add')); ?> </li>
-		<li><?php echo $html->link(__('List Submission Fields', true), array('controller' => 'submission_fields', 'action' => 'index')); ?> </li>
-		<li><?php echo $html->link(__('New Submission Field', true), array('controller' => 'submission_fields', 'action' => 'add')); ?> </li>
-	</ul>
 </div>
