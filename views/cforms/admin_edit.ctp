@@ -1,7 +1,7 @@
 <script type="text/javascript">
 $(function() {
 	$("#sortable tbody").sortable({});
-	$("#accordion").accordion();
+	$("#accordion").accordion({autoHeight: false});
 	
 	$("#sortable tbody").bind('sortupdate', function(event, ui) {
 	
@@ -78,7 +78,7 @@ $(function() {
 //		echo $form->input('next');
 	?>
 	</fieldset>
-	<div id="accordion">
+	<div id="accordion">			
 		<h3><a href="#">Form Fields</a></h3>
 		<div id="fields">
 			<table id="sortable">
@@ -116,9 +116,10 @@ $(function() {
 			</table>
 			<a id="addField" href="#">Add Field</a>
 		</div>
-		<h3><a href="#">Accordian2</a></h3>
-		<div> Accordian 2 content!
-		</div>		
+		<h3><a href="#">Form Options</a></h3>
+		<div>
+			
+		</div>			
 	</div>
 <?php echo $form->end('Submit');?>
 </div>

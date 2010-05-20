@@ -48,12 +48,20 @@ class CformHelper extends AppHelper {
                 } else {
                         $options['type'] = $field['type'];
                         if(in_array($field['type'], array('select', 'checkbox', 'radio'))){
-                                if($field['type'] == 'checkbox' && !empty($field['options'])){
-                                        $options['type'] = 'select';
-                                        $options['multiple'] = 'checkbox';
-                                }
                                 
-                                $options['options'] = $field['options'];
+                                
+                                if($field['type'] == 'checkbox'){
+                                    if(count($field['options']) > 1){
+                                            $options['type'] = 'select';
+                                            $options['multiple'] = 'checkbox';
+                                            $options['options'] = $field['options'];
+                                    } else {
+                                        $options['value'] = $field['name'];
+                                    }
+                                } else {
+                                    $options['options'] = $field['options'];                                    
+                                }
+
                         }
                         
                         if(!empty($field['label'])){

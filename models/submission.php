@@ -33,7 +33,11 @@ class Submission extends AppModel {
 				'response' => $response
 			);
 		}
-		$this->saveAll($formFields, array('validate' => false));
+		if($this->saveAll($formFields, array('validate' => false))){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	function getSubmissions($formId){
