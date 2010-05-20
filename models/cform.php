@@ -31,7 +31,8 @@ class Cform extends CformsAppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
-		)
+		),
+		'Submission'
 	);
 	
 	function beforeFind(){

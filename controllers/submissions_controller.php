@@ -3,8 +3,7 @@ class SubmissionsController extends CformsAppController {
 
 	var $name = 'Submissions';
 	var $helpers = array('Html', 'Form', 'Cforms.Csv');
-	var $components = array('RequestHandler');
-
+	var $components = array('Cform');
 
 	function admin_export($formId = null){
 		if (!$formId) {
@@ -19,49 +18,6 @@ class SubmissionsController extends CformsAppController {
 		
 		$this->set(compact('submissions', 'fields'));
 		
-	}
-
-/**
- * Generates form, validates and submits.
- *
- * @param $id 
- * 
- *
- *
- * @todo Add multipage form support
- */
-
-	function submit($id = null) {
-		if(!empty($this->data['Cform']['id'])){
-			$id = $this->data['Cform']['id'];
-			
-		} elseif (!$id) {
-			$this->Session->setFlash(__('Invalid Submission', true));
-			$this->redirect(array('action' => 'index'));
-			
-		}
-
-		$cform = $this->Submission->Cform->buildSchema($id);
-
-		if(!empty($this->data)){
-			$this->Submission->Cform->set($this->data);
-			if($this->Submission->Cform->validates()){
-				if(!empty($cform['Cform']['next'])){
-					$this->Session->write('Cform.form.' .  $id, $this->data['Cform']);
-				} else {
-					$this->data['Submission']['cform_id'] = $id;
-					$this->data['Submission']['ip'] = ip2long($this->RequestHandler->getClientIP());
-					unset($this->data['Cform']['id']);
-					$this->Submission->submit($this->data);
-					
-					if(!empty($cform['Cform']['redirect'])){
-						$this->redirect($cform['Cform']['redirect']);
-					}
-				}
-			}
-		}
-		$multiTypes = $this->Submission->Cform->FormField->multiTypes;
-		$this->set(compact('id', 'cform', 'multiTypes'));
 	}
 
 	function index($formId = null) {
