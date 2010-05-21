@@ -14,7 +14,7 @@
         echo
         // Load your CSS files here
         $html->css(array(
-            '/wildflower/css/wf.main',
+	    '/cforms/css/cforms',
 	    '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom'
         )),
 
@@ -27,11 +27,12 @@
         echo $html->css('/wildflower/css/wf.ie7');
     ?>
     <![endif]-->
-    
+
+    <?php echo $scripts_for_layout;?>    
 </head>
 <body>
 
-    <div id="login_box" style="width: 760px">
+    <div id="clean_box">
         <?php echo $content_for_layout; ?>
     </div>
     
