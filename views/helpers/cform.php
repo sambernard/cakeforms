@@ -3,6 +3,35 @@ class CformHelper extends AppHelper {
     public $helpers = array('Html', 'Form');
     public $openFieldset = false;
     
+    function js(){
+        $out =
+        "<script type='text/javascript'>
+    $(function() {
+    $('.dependent').each(function(){
+        var dependsName = $(this).attr('dependson');
+        var dependsValue = $(this).attr('dependsvalue');
+
+        dependsOn = $('[name*=\"'+ dependsName + '\"]');
+        div = $(this).closest('div');
+
+        if(dependsOn.val() != dependsValue){
+            div.hide();
+        }
+
+        dependsOn.live('change', function(){
+                    if(dependsValue == $(this).val()){
+                         div.show();
+                } else {
+                        div.hide();
+                }});
+            });
+        });
+        </script>        
+        ";
+        
+        return $out;
+    }
+    
     function insert($formData){
         $out = '';
 
@@ -24,6 +53,8 @@ class CformHelper extends AppHelper {
         
         $out .= $this->Form->end('Submit');        
         
+        $out .= $this->js();
+        
         return $this->output($out);
     }
     
@@ -32,7 +63,8 @@ class CformHelper extends AppHelper {
         $out = '';
         
         if(!empty($field['type'])){
-                if($field['type'] == 'fieldset'){
+                switch($field['type']){
+                    case 'fieldset':
                         if($this->openFieldset == true){
                                 $out .= "</fieldset>";
                         }
@@ -44,8 +76,9 @@ class CformHelper extends AppHelper {
                                 $out .= "<legend>".Inflector::humanize($field['name'])."</legend>";
                                 $out .= $this->Form->hidden('Cform.fs_' . $field['name'], array('value' => $field['name']));
                         }
-                        
-                } else {
+                    break;  
+                
+                    default:
                         $options['type'] = $field['type'];
                         if(in_array($field['type'], array('select', 'checkbox', 'radio'))){
                                 
@@ -64,6 +97,12 @@ class CformHelper extends AppHelper {
 
                         }
                         
+                        if(!empty($field['depends_on']) && !empty($field['depends_value'])){
+                            $options['class'] = 'dependent';
+                            $options['dependsOn'] = $field['depends_on'];
+                            $options['dependsValue'] = $field['depends_value'];
+                        }
+                        
                         if(!empty($field['label'])){
                                 $options['label'] = $field['label'];
                         }
@@ -75,7 +114,7 @@ class CformHelper extends AppHelper {
                         $options = Set::merge($custom_options, $options);
                         
                         $out .= $this->Form->input('Cform.' . $field['name'], $options);
-                
+                        break;
                 }
         }
         return $out;

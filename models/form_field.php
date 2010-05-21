@@ -31,9 +31,9 @@ class FormField extends CformsAppModel {
 	);
 	
 	var $types = array(
-			   'fieldset' => 'Fieldset',
 			   'text' => 'Single Line of Text',
 			   'textarea' => 'Multiple Lines of Text',
+			   'fieldset' => 'Fieldset',
 			   'select' => 'Select Box',
 			   'checkbox' => 'Checkboxes',
 			   'radio' => 'Radio Buttons',
@@ -48,6 +48,12 @@ class FormField extends CformsAppModel {
 		if(!empty($this->data['FormField']['name'])){
 			$this->data['FormField']['name'] = Inflector::slug($this->data['FormField']['name']);
 		}
+		
+		if(empty($this->data['FormField']['id']) && empty($this->data['FormField']['order'])){
+			$order = $this->find('count', array('conditions' => array('cform_id' => $this->data['FormField']['cform_id']))) + 1;
+			$this->data['FormField']['order'] = $order;
+		}
+		
 		return true;
 	}
 
