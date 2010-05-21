@@ -3,45 +3,86 @@ class FormFieldsController extends CformsAppController {
 
 	var $name = 'FormFields';
 	var $helpers = array('Html', 'Form');
-	var $components = array('RequestHandler');
 
-	function admin_add() {
-		if (!empty($this->data)) {
+	function admin_add($formId = null) {
+		$response = false;
+		
+		if(!empty($this->data)){
+			if(empty($this->data['FormField']['name'])){
+				$this->data['FormField']['name'] = 'New Field';
+			}
+			
 			$this->FormField->create();
 			if ($this->FormField->save($this->data)) {
-				$this->Session->setFlash(__('The FormField has been saved', true));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The FormField could not be saved. Please, try again.', true));
+				$response = $this->FormField->id;
 			}
+			
+			$this->set('response', $response);
+			$this->render('../elements/ajax_reponse');
+		
+		} elseif($formId) {
+			$this->data['FormField']['cform_id'] = $formId;
+			$types = $this->FormField->types;
+			$this->set('types', $types);
+			$this->render('admin_add');
 		}
-		$validationRules = $this->FormField->ValidationRule->find('list');
-		$cforms = $this->FormField->Cform->find('list');
-		$this->set(compact('validationRules', 'cforms'));
+	}
+
+	function admin_get_row($id){
+		$field = $this->FormField->findById($id);
+		$field = $field['FormField'];
+		$multiTypes = $this->FormField->multiTypes;
+		$types = $this->FormField->types;
+		$key = $this->FormField->find('count', array('conditions' => array('cform_id' => $field['cform_id'])));
+		$this->set(compact('field', 'multiTypes', 'key', 'types'));
+		$this->render('../elements/form_field_row');
 	}
 
 	function admin_edit($id = null) {
+		if($this->RequestHandler->isAjax()){
+			
+			if (!$id && empty($this->data)) {
+				$this->set('response', null);
+				$this->render('../elements/ajax_reponse');
+				
+			} elseif(!empty($this->data)) {
+				if ($this->FormField->save($this->data)) {
+					$this->set('response', 'success');
 
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid FormField', true));
-			$this->redirect(array('controller' => 'cforms', 'action' => 'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->FormField->save($this->data)) {
-				$this->Session->setFlash(__('The FormField has been saved', true));
-				$this->redirect(array('action' => 'edit', $id));
+				} else {
+					$this->set('response', null);
+				}
+					$this->render('../elements/ajax_reponse');
 			} else {
-				$this->Session->setFlash(__('The FormField could not be saved. Please, try again.', true));
+				$this->data = $this->FormField->read(null, $id);
+				$validationRules = $this->FormField->ValidationRule->find('list');
+				$this->set(compact('validationRules'));
 			}
+			return true;
+		
+		} else {
+			$this->redirect('/');
 		}
-		if (empty($this->data)) {
-			$this->data = $this->FormField->read(null, $id);
-		}
-		$validationRules = $this->FormField->ValidationRule->find('list');
-		$cforms = $this->FormField->Cform->find('list');
-		$types = $this->FormField->types;
-		$multiTypes = $this->FormField->multiTypes;
-		$this->set(compact('validationRules','cforms', 'multiTypes', 'types'));
+		
+		//if (!$id && empty($this->data)) {
+		//	$this->Session->setFlash(__('Invalid FormField', true));
+		//	$this->redirect(array('controller' => 'cforms', 'action' => 'index'));
+		//}
+		//if (!empty($this->data)) {
+		//	if ($this->FormField->save($this->data)) {
+		//		$this->Session->setFlash(__('The FormField has been saved', true));
+		//		$this->redirect(array('action' => 'edit', $id));
+		//	} else {
+		//		$this->Session->setFlash(__('The FormField could not be saved. Please, try again.', true));
+		//	}
+		//}
+		//
+		//if (empty($this->data)) {
+		//	$this->data = $this->FormField->read(null, $id);
+		//}
+		//
+		//$validationRules = $this->FormField->ValidationRule->find('list');
+		//$this->set(compact('validationRules'));
 	}
 
 	function admin_delete($id = null) {
@@ -81,10 +122,8 @@ class FormFieldsController extends CformsAppController {
 		    $order++;
                 }
 		$this->set('response', 'success');
+		$this->render('../elements/ajax_reponse');
                 return true;
-            } else {
-		$this->set('response', 'failure');
-                return false;
             }
         }	
 

@@ -3,6 +3,75 @@ $(function() {
 	$("#sortable tbody").sortable({});
 	$("#accordion").accordion({autoHeight: false});
 	
+	$("#addField").dialog({
+		modal: true,
+		autoOpen: false,
+	});
+	
+	$("#addField form").live('submit', function(){
+		var data = $(this).serialize();
+		var url = $(this).attr('action');
+		
+		$.post(
+		url,
+		data,
+		function(response){
+			if(response){
+				$.get('<?php echo $html->url(array('controller' => 'form_fields', 'action' => 'get_row'))?>/' + response,
+				      function(data){
+					$("#sortable tbody").append(data);
+				      });
+				$("#addField").dialog('close');
+				}
+			}
+		);
+		return false;
+	});
+	
+	$("#addFieldLink").click(function(){
+		var url = $(this).attr('href');
+		
+		$.get(url,
+			function(data){
+			  $("#addField").html(data);
+			  $("#addField").dialog('open');
+			});
+		return false;
+		});	
+
+	
+	$("#addValidation").dialog({
+		modal: true,
+		autoOpen: false,
+	});
+	
+	$(".validationLink").live('click', function(){
+		var url = $(this).attr('href');
+		$.get(url,
+			function(data){
+			  $("#addValidation").html(data);
+			  $("#addValidation").dialog('open');
+			});
+		return false;
+		});
+	
+	$('#addValidation form').live('submit', function(){
+		var data = $(this).serialize();
+		var url = $(this).attr('action');
+		
+		$.post(
+		url,
+		data,
+		function(response){
+			if(response == 'success'){
+				$("#addValidation").dialog('close');
+				}
+			}
+		);
+		return false;
+		})
+	
+	$("button, input:submit, a.jsbutton").button();
 	$("#sortable tbody").bind('sortupdate', function(event, ui) {
 	
 		var data = $('input[name*="data[FormField]"][name*="[id]"]').serialize();
@@ -47,37 +116,14 @@ $(function() {
 			$(this).closest('tr').remove();	
 		}
 		});
-	
-	$("#addField").click(function(){
-		var index = $('.ui-state-default').size();
-		var formId = $('#CformId').val();
-		var html = '<tr class="ui-state-default"><td><span class="ui-icon ui-icon-arrowthick-2-n-s">'+index+'</span></td> <td><input type="hidden" id="FormField'+index+'FormId" value="'+formId+'" name="data[FormField]['+index+'][form_id]"><input type="hidden" id="FormField'+index+'Order" value="'+index+'" name="data[FormField]['+index+'][order]"><div class="input text required"><input type="text" id="FormField'+index+'Name" maxlength="255" name="data[FormField]['+index+'][name]"></div></td> <td><div class="input text"><input type="text" id="FormField'+index+'Label" value="" maxlength="255" name="data[FormField]['+index+'][label]"></div></td> <td><div class="input select"><select id="FormField'+index+'Type" name="data[FormField]['+index+'][type]"><?php foreach($types as $key => $type){ echo "<option value=\"$key\">$type</option>";}?></select></div><div class="input text" style="display:none"><label for="FormField'+index+'Options">Options</label><input type="text" id="FormField'+index+'Options" name="data[FormField]['+index+'][options]"></div></td> <td><div class="input checkbox"><input type="hidden" value="0" id="FormField'+index+'Required_" name="data[FormField]['+index+'][required]"><input type="checkbox" id="FormField'+index+'Required" value="1" name="data[FormField]['+index+'][required]"></div></td><td><span class="ui-icon ui-icon-circle-close delete">Remove</span></td></tr>';
-		
-		$("#sortable tbody").append(html);
-		
-		return false;
-		});
-	
-	//$("#sortable input, #sortable textarea").change(function(){
-	//	var data = $(this).closest('#PhotoAddForm').serialize();
-	//	$.post(
-	//	'<?php echo $this->base;?>/admin/photos/edit/',
-	//	data
-	//	);
-	//});
 });
 </script>
 <div class="cforms form">
 <?php echo $form->create('Cform');?>
-	<fieldset>
- 		<legend><?php __('Editing Form: '); echo $this->data['Cform']['name']; ?></legend>
 	<?php
 		echo $form->input('id');
-		echo $form->input('name');
-		echo $form->input('recipient');
-//		echo $form->input('next');
+		echo $form->input('name', array('label' => 'Form Name'));
 	?>
-	</fieldset>
 	<div id="accordion">			
 		<h3><a href="#">Form Fields</a></h3>
 		<div id="fields">
@@ -90,36 +136,35 @@ $(function() {
 			if(!empty($this->data['FormField'])){
 				$i=1;
 				foreach($this->data['FormField'] as $key => $field){
-					if(!in_array($field['type'], $multiTypes)){
-						$typeOptions = array('type' => 'text','div' => array('style' => 'display:none'));
-					} else {
-						$typeOptions = array('type' => 'text');
-					}
-					
-					$rows[] = array(
-					'<span class="ui-icon ui-icon-arrowthick-2-n-s">' . $i . '</span>',
-					$form->hidden('FormField.' . $key . '.id') .
-					$form->input('FormField.' . $key . '.name', array('label' => false)),
-					$form->input('FormField.' . $key . '.label', array('label' => false)),
-					$form->input('FormField.' . $key . '.type', array('label' => false)) .
-					$form->input('FormField.' . $key . '.options', $typeOptions),
-					$form->input('FormField.' . $key . '.required', array('label' => false)),
-					'<span class="ui-icon ui-icon-circle-close delete">Remove</span>' . $html->link('Add Validation', array('controller' => 'form_fields', 'action' => 'edit', $field['id']))
-					);
-					$i++;
-					
+					echo $this->element('form_field_row', array('key' => $key, 'field' => $field, 'multiTypes' => $multiTypes));
 				}
-				echo $html->tableCells($rows, array('class' => 'ui-state-default'),array('class' => 'ui-state-default'));
 			}
 			?>
 			</tbody>
 			</table>
-			<a id="addField" href="#">Add Field</a>
+			<?php echo $html->link('Add Field', array('plugin' => 'cforms', 'admin' => true, 'controller' => 'form_fields', 'action' => 'add', $this->data['Cform']['id']), array('class' => 'jsbutton', 'id' => 'addFieldLink'));?>
 		</div>
-		<h3><a href="#">Form Options</a></h3>
+		<h3><a href="#">Miscellaneous Options</a></h3>
 		<div>
-			
+		<?php
+			echo $form->input('action', array('label' => 'Alternative Form Action'));
+			echo $form->input('redirect', array('label' => 'Alternative Success Page/Redirect'));
+		?>			
+		</div>
+		<h3><a href="#">Email Options/Autoconfirmation</a></h3>		
+		<div>
+		<?php
+			echo $form->input('recipient', array('label' => 'Admin email address'));
+			echo $form->input('from', array('label' => 'FROM: email address'));
+			echo $form->input('auto_confirmation', array('label' => 'Send a copy of this email to the visitor:'));
+		?>						
 		</div>			
 	</div>
 <?php echo $form->end('Submit');?>
+</div>
+
+<div id="addField" title="Add Field">
+</div>
+
+<div id="addValidation" title="Edit Validation">
 </div>
