@@ -23,7 +23,7 @@ class Submission extends AppModel {
 		$id = $this->id;
 		
 		$formFields = array('Submission' => array('id' => $id));
-		foreach($data['Cform'] as $formField => $response){
+		foreach($data['Form'] as $formField => $response){
 			if(is_array($response)){
 				$response = implode("\n", $response);
 			}
