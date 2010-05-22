@@ -1,4 +1,3 @@
-<?php echo $cform->insert();?>
 <div class="submissions index">
 <h2><?php __('Submissions');?></h2>
 <p>

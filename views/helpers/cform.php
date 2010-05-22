@@ -2,7 +2,7 @@
 class CformHelper extends AppHelper { 
     public $helpers = array('Html', 'Form');
     public $openFieldset = false;
-    
+
     function js(){
         $out =
         "<script type='text/javascript'>
@@ -11,8 +11,8 @@ class CformHelper extends AppHelper {
         var dependsName = $(this).attr('dependson');
         var dependsValue = $(this).attr('dependsvalue');
 
-        dependsOn = $('[name*=\"'+ dependsName + '\"]');
-        div = $(this).closest('div');
+        var dependsOn = $('[name*=\"'+ dependsName + '\"]');
+        var div = $(this).closest('div');
 
         if(dependsOn.val() != dependsValue){
             div.hide();
@@ -36,16 +36,18 @@ class CformHelper extends AppHelper {
         $out = '';
 
         if(!empty($formData['Cform'])){
-            $out .= $this->Form->create('Submission', array('url' => '/' . $this->params['url']['url']));
+            $out .= $this->Form->create('Form', array('url' => '/' . $this->params['url']['url'], 'class' => 'cform'));
             $out .= $this->Form->hidden('Cform.id', array('value' => $formData['Cform']['id']));
             $out .= $this->Form->hidden('Cform.submitHere', array('value' => true));
+            
+            $out .= '<span class="reqtxt">Indicates a required field.</span>';
             
             if(isset($formData['FormField'])){
                 foreach($formData['FormField'] as $field){
                     $out .= $this->field($field);
                 }
             }
-        }
+        
         
         if($this->openFieldset == true){
                 $out .= "</fieldset>";
@@ -54,6 +56,8 @@ class CformHelper extends AppHelper {
         $out .= $this->Form->end('Submit');        
         
         $out .= $this->js();
+        
+        }
         
         return $this->output($out);
     }
@@ -78,10 +82,13 @@ class CformHelper extends AppHelper {
                         }
                     break;  
                 
+                    case 'textonly':
+                        $out = $this->Html->para('textonly', $field['label']);
+                    break;
+                
                     default:
                         $options['type'] = $field['type'];
                         if(in_array($field['type'], array('select', 'checkbox', 'radio'))){
-                                
                                 
                                 if($field['type'] == 'checkbox'){
                                     if(count($field['options']) > 1){
@@ -90,6 +97,7 @@ class CformHelper extends AppHelper {
                                             $options['options'] = $field['options'];
                                     } else {
                                         $options['value'] = $field['name'];
+                                        $options['empty'] = 'select one';
                                     }
                                 } else {
                                     $options['options'] = $field['options'];                                    
@@ -107,13 +115,12 @@ class CformHelper extends AppHelper {
                                 $options['label'] = $field['label'];
                         }
                         
-                        if(!empty($field['default']) && empty($this->data['Cform'][$field['name']])){
+                        if(!empty($field['default']) && empty($this->data['Form'][$field['name']])){
                                 $options['value'] = $field['default'];
                         }
                         
                         $options = Set::merge($custom_options, $options);
-                        
-                        $out .= $this->Form->input('Cform.' . $field['name'], $options);
+                        $out .= $this->Form->input($field['name'], $options);
                         break;
                 }
         }

@@ -17,6 +17,8 @@ class SubmissionsController extends CformsAppController {
 		$fields = array_keys($submissions[0]);
 		
 		$this->set(compact('submissions', 'fields'));
+		$this->layout = 'csv/default';
+		$this->render('csv/admin_export');
 		
 	}
 

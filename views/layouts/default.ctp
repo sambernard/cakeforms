@@ -15,7 +15,8 @@
         // Load your CSS files here
         $html->css(array(
 	    '/cforms/css/cforms',
-	    '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom'
+	    '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom',
+	    '/cforms/css/fancy_white',
         )),
 
         $javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js'));

@@ -11,7 +11,6 @@ class CformsController extends CformsAppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Cform->saveAll($this->data)) {
-				unset($this->data);
 				$this->Session->setFlash(__('The Form has been saved', true));
 			} else {
 				$this->Session->setFlash(__('The Cform could not be saved. Please, try again.', true));

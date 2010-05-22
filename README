@@ -1,5 +1,36 @@
 Cakeforms 0.1
 ***********************************
+An easy to use form plugin inspired by the amazing Cforms plugin for Wordpress(http://www.deliciousdays.com/cforms-plugin/)
+
+Installation
+============
+
+Instructions for Use
+============
+**Creating Forms:
+1)  Go to /admin/cforms/add
+2)  Name your form
+3)  Add fields. Field Name _should_ be unique- it probably won't mess anything up but only the last field with a name will be processed
+    *The label can be left blank.
+    *Field types are standard- as of right now if 'checkbox' is selected the required option will _not_ work- it won't cause any errors it just doesn't work right now.
+    *If a field can have options(e.g. checkbox, select), you enter options as a comma separated list
+    *Adding validation- the standatd rules are included- if you want to edit the message displayed go to /admin/cforms/validation_rules/
+
+**Displaying Forms:
+1)  Add 'Cforms.Cform' to your list of components
+2)  Call '$this->set('formData', $this->Cform->loadForm($formId))' in your controller- $formId is the id of your form
+3)  Call 'echo $cform->insert($formData)' in your view
+4)  The component will take care of catching the form data- by default the form action is set to the current route. The default config will send the contents of the form to the email specified in the form config, and store the results in the database, which can be viewed at /admin/cforms/submissions/ 
+
+**Form Config Options:
+*Alternative Form Action: Modifies the action of the form... you lose any validation/processing of the data _unless_ the cform
+component is included in the controller that the action points to.
+*Redirect: Sets a redirect after the form has been processed
+*Admin email: The email address to which form submissions are sent
+*From emai: The email address from which submissions are sent
+
+
+
 
 Features
 ============
@@ -8,8 +39,9 @@ Features
 * Per Form Recipients
 * Database Tracking
 * CSV Export
+* Embed form anywhere using component and helper
+* Autoresponder
 
 Coming Soon
 =============
 * Multi-page forms
-* Autoresponder
