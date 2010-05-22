@@ -71,6 +71,8 @@ ol.cf-ol li.textonly {
 	font:normal 12px monospace;
 }
 
+
+
 label.cf-before {
 	display:-moz-inline-box; /*for mozilla*/
 	display:inline-block; /*for Opera & IE*/
@@ -183,16 +185,15 @@ ol.cf-ol li.cf-box-title {
 	border:none!important;
 	background:none!important;
 	clear: left;
+	float: left;
 }
 
 .checkbox label, .radio label{
 	clear:right;
-	float:right;
+	float:left;
 	margin-top:2px;
-}
-
-.checkbox.required label:after, .radio.required label:after{
-	content: '*';
+	width: 350px;
+	float: left;
 }
 
 /*                                                    */
@@ -211,6 +212,11 @@ ol.cf-ol li.cf-box-title {
 .required label:after{
 	content: url('../img/req-bg.gif');
 }
+
+.select.required .checkbox label:after{
+	content: '';
+}
+
 
 .reqtxt{
 	font-style: italic
@@ -270,6 +276,7 @@ p.cf-sb {
 }
 .error-message {
 	font-weight:bold;
+	clear: both
 }
 
 

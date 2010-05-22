@@ -126,10 +126,10 @@ class CformHelper extends AppHelper {
                                             $options['options'] = $field['options'];
                                     } else {
                                         $options['value'] = $field['name'];
-                                        $options['empty'] = 'select one';
                                     }
                                 } else {
-                                    $options['options'] = $field['options'];                                    
+                                    $options['options'] = $field['options'];
+                                    $options['empty'] = 'select one';
                                 }
 
                         }

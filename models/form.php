@@ -46,7 +46,7 @@ class Form extends CformsAppModel {
 				);
 				
 				if(!empty($field['ValidationRule'])){
-					if(!($field['type'] == 'checkbox' && !empty($field['options']))){
+					if(!empty($field['options'])){
 						foreach($field['ValidationRule'] as $rule){
 							$validate[$field['name']][$rule['rule']] = array(
 								'rule' => $rule['rule'],
@@ -56,7 +56,7 @@ class Form extends CformsAppModel {
 							);
 						}
 					}
-				} elseif($field['required'] && !($field['type'] == 'checkbox' && !empty($field['options']))){
+				} elseif($field['required']){
 					$validate[$field['name']] = array('notEmpty');
 				}
 				
