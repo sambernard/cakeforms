@@ -1,8 +1,20 @@
 <?php  
 class CformHelper extends AppHelper { 
     public $helpers = array('Html', 'Form');
+    
+/**
+ * used in generating form fieldsets
+ *
+ * @access public
+ */       
     public $openFieldset = false;
 
+/**
+ * Javascript for form functionality
+ *
+ * @todo move to external file
+ * @access public
+ */   
     function js(){
         $out =
         "<script type='text/javascript'>
@@ -31,7 +43,15 @@ class CformHelper extends AppHelper {
         
         return $out;
     }
-    
+
+/**
+ * Generates form HTMl
+ *
+ * @param array $formData
+ *
+ * @return string Form Html
+ * @access public
+ */      
     function insert($formData){
         $out = '';
 
@@ -61,7 +81,16 @@ class CformHelper extends AppHelper {
         
         return $this->output($out);
     }
-    
+
+/**
+ * Generates appropriate html per field
+ *
+ * @param array $field Field to process
+ * @parram array $custom_options Custom $form->input options for field
+ *
+ * @return string field html
+ * @access public
+ */       
     function field($field, $custom_options = array()){
         $options = array();
         $out = '';
@@ -78,7 +107,7 @@ class CformHelper extends AppHelper {
                         
                         if(!empty($field['name'])){
                                 $out .= "<legend>".Inflector::humanize($field['name'])."</legend>";
-                                $out .= $this->Form->hidden('Cform.fs_' . $field['name'], array('value' => $field['name']));
+                                $out .= $this->Form->hidden('fs_' . $field['name'], array('value' => $field['name']));
                         }
                     break;  
                 
