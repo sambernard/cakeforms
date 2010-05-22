@@ -4,9 +4,9 @@ class FormField extends CformsAppModel {
 	var $name = 'FormField';
 	var $validate = array(
 		'name' => array('notempty'),
-		'type' => array('notempty'),
+		//'type' => array('notempty'),
 		'cform_id' => array('numeric'),
-		'required' => array('boolean')
+		//'required' => array('boolean')
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -33,6 +33,7 @@ class FormField extends CformsAppModel {
 	var $types = array(
 			   'text' => 'Single Line of Text',
 			   'textarea' => 'Multiple Lines of Text',
+			   'textonly' => 'Text Only(no input)',
 			   'fieldset' => 'Fieldset',
 			   'select' => 'Select Box',
 			   'checkbox' => 'Checkboxes',

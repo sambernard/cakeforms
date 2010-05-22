@@ -7,12 +7,12 @@ class CformComponent extends Object{
         
         function initialize(&$controller, $settings = array()) {
                 $this->controller =& $controller;
-                if(empty($this->controller->Submission)){
-                    App::import('Model', 'Cforms.Submission');
-                    $this->Submission = new Submission;
+                if(empty($this->controller->Form)){
+                    App::import('Model', 'Cforms.Form');
+                    $this->Form = new Form;
                 
                 } else {
-                    $this->Submission = &$this->controller->Submission;
+                    $this->Form = &$this->controller->Form;
                 }
                 
                 if(!empty($settings['email'])){
@@ -33,7 +33,7 @@ class CformComponent extends Object{
         
         function loadForm($id){
             if(empty($this->formData)){
-                $this->formData = $this->Submission->Cform->buildSchema($id);
+                $this->formData = $this->Form->buildSchema($id);
             }
             $this->controller->set('formData', $this->formData);
             
@@ -43,21 +43,21 @@ class CformComponent extends Object{
         function submit(){
             $id = $this->controller->data['Cform']['id'];
     
-            $formData = $this->loadForm($id);
-
+            $this->loadForm($id);
+                
             $validate = $this->controller->data;
-            foreach($validate['Cform'] as &$field){
+            foreach($validate['Form'] as &$field){
                 if(is_array($field)){
                         $field = implode("\n", $field);
                 }
             }
 
-            $this->Submission->Cform->set($validate);
-            if($this->Submission->Cform->validates()){
-                    if(!empty($formData['Cform']['next'])){
+            $this->Form->set($validate);
+            if($this->Form->validates()){
+                    if(!empty($this->formData['Cform']['next'])){
                             $this->Session->write('Cform.form.' .  $id, $this->controller->data['Cform']);
                     } else {
-                            if(!empty($this->controller->data['Cform']['email'])){
+                            if(!empty($this->controller->data['Form']['email'])){
                                     $this->controller->data['Submission']['email'] = $this->controller->data['Cform']['email'];
                             }
                             $this->controller->data['Submission']['cform_id'] = $id;
@@ -65,11 +65,14 @@ class CformComponent extends Object{
                             unset($this->controller->data['Cform']['id']);
                             unset($this->controller->data['Cform']['submitHere']);
                             
+                            
+                            App::import('Model', 'Cforms.Submission');
+                            $this->Submission = new Submission;
                             if($this->Submission->submit($this->controller->data)){
-                                $this->send($formData['Cform'], $this->controller->data);
+                                $this->send($this->formData['Cform'], $this->controller->data);
                                 
-                                if(!empty($formData['Cform']['redirect'])){
-                                        $this->redirect($formData['Cform']['redirect']);
+                                if(!empty($this->formData['Cform']['redirect'])){
+                                        $this->redirect($this->formData['Cform']['redirect']);
                                 }
                                 return true;
                             }

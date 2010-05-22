@@ -4,14 +4,18 @@
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 <table>
-<?php foreach($response['Cform'] as $label => $data):?>
+<?php foreach($response['Form'] as $label => $data):?>
 <?php
     $style = '';
     if(strstr($label, 'fs_')){
     $style = 'style="background:#ececec"';
     $label = $data;
     $data = null;
-    }?>
+    }
+    if(is_array($data)){
+        $data = implode(', ', $data);
+    }
+    ?>
 <tr <?php echo $style;?>><td style="width:120px; padding-right: 10px; text-align: right"><strong><?php echo Inflector::humanize($label);?></strong></td><td style="width:450px"><?php echo $data;?></td></tr>
 <?php endforeach;?>
 </table>

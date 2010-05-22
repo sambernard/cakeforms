@@ -4,7 +4,7 @@ IP: <?php echo long2ip($response['Submission']['ip']);?>
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-<?php foreach($response['Cform'] as $label => $data):?>
+<?php foreach($response['Form'] as $label => $data):?>
 <?php
     $style = '';
     if(strstr($label, 'fs_')){
