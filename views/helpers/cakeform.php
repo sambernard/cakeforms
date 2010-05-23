@@ -5,8 +5,7 @@ class CakeformHelper extends AppHelper {
     public function beforeRender() {
         $view =& ClassRegistry::getObject('view');
         if($view){
-            $this->Javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js'), false);
-            $this->js();
+            $this->Javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js', '/cforms/js/form/form.js'), false);
             $view->addScript($this->Html->css(array('/cforms/css/fancy_white', '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom')));
         }
     }
@@ -19,40 +18,6 @@ class CakeformHelper extends AppHelper {
     public $openFieldset = false;
 
 /**
- * Javascript for form functionality
- *
- * @todo move to external file
- * @access public
- */   
-    function js(){
-        $js =
-        "
-    $(function() {
-    $('.dependent').each(function(){
-        var dependsName = $(this).attr('dependson');
-        var dependsValue = $(this).attr('dependsvalue');
-
-        var dependsOn = $('[name*=\"'+ dependsName + '\"]');
-        var div = $(this).closest('div');
-
-        if(dependsOn.val() != dependsValue){
-            div.hide();
-        }
-
-        dependsOn.live('change', function(){
-                    if(dependsValue == $(this).val()){
-                         div.show();
-                } else {
-                        div.hide();
-                }});
-            });
-        });
-        ";
-        
-        $this->Javascript->codeBlock($js, array('inline' => false));
-    }
-
-/**
  * Generates form HTMl
  *
  * @param array $formData
@@ -62,6 +27,7 @@ class CakeformHelper extends AppHelper {
  */      
     function insert($formData){
         if(!($formData['Cform']['submitted'] == true && $formData['Cform']['hide_after_submission'] == true)){
+		$this->Javascript->link(array('/cforms/js/form/form.js'), false);
             $out = '';
     
             if(!empty($formData['Cform'])){
