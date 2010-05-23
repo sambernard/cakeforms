@@ -258,6 +258,7 @@ class CakeformComponent extends Object{
                             
                             $this->Controller->data['Submission']['name'] = $formName;
                             $this->Controller->data['Submission']['ip'] = ip2long($this->RequestHandler->getClientIP());
+                            $this->Controller->data['Submission']['page'] = $this->Controller->here;
                             unset($this->Controller->data['Cform']['id']);
                             unset($this->Controller->data['Cform']['submitHere']);
                             
@@ -293,12 +294,17 @@ class CakeformComponent extends Object{
                 }
                 
 		$this->Email->subject = "New '{$formData['name']}' Submission";
-                $this->Email->delivery = 'debug';
 		$this->Email->sendAs = 'both';
+
+                $plugin = $this->Controller->plugin;
+                $this->Controller->plugin = 'cforms';
 		$this->Email->template = 'submission';
                 
                 $this->Controller->set(compact('formData', 'response'));
-		return $this->Email->send();
+		$success = $this->Email->send();
+                $this->Controller->plugin = $plugin;
+                
+                return $success;
 	}
         
     }

@@ -3,20 +3,14 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 20, 2010 at 03:37 AM
+-- Generation Time: May 23, 2010 at 02:53 PM
 -- Server version: 5.1.37
 -- PHP Version: 5.3.0
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
 --
--- Database: `cforms`
+-- Database: `wildflower`
 --
 
 -- --------------------------------------------------------
@@ -30,9 +24,14 @@ CREATE TABLE IF NOT EXISTS `cforms` (
   `name` varchar(45) NOT NULL,
   `recipient` varchar(255) DEFAULT NULL,
   `next` int(10) unsigned DEFAULT NULL,
-  `redirect` varchar(255) NOT NULL,
+  `redirect` varchar(255) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `from` varchar(255) DEFAULT NULL,
+  `auto_confirmation` tinyint(1) NOT NULL DEFAULT '0',
+  `require_ssl` tinyint(1) NOT NULL DEFAULT '0',
+  `hide_after_submission` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -42,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `cforms` (
 
 CREATE TABLE IF NOT EXISTS `form_fields` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT 'New Field',
   `label` varchar(255) DEFAULT NULL,
   `type` varchar(45) NOT NULL COMMENT 'text',
   `length` int(10) unsigned DEFAULT NULL COMMENT '255',
@@ -52,8 +51,10 @@ CREATE TABLE IF NOT EXISTS `form_fields` (
   `required` tinyint(1) NOT NULL,
   `order` int(10) unsigned NOT NULL,
   `options` text NOT NULL,
+  `depends_on` varchar(45) DEFAULT NULL,
+  `depends_value` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -66,8 +67,7 @@ CREATE TABLE IF NOT EXISTS `form_fields_validation_rules` (
   `form_field_id` int(10) unsigned NOT NULL,
   `validation_rule_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -80,8 +80,10 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   `cform_id` int(10) unsigned NOT NULL,
   `created` datetime DEFAULT NULL,
   `ip` int(4) unsigned DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `page` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -95,9 +97,7 @@ CREATE TABLE IF NOT EXISTS `submission_fields` (
   `form_field` varchar(255) NOT NULL,
   `response` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `validation_rules`
@@ -127,7 +127,3 @@ INSERT INTO `validation_rules` (`id`, `rule`, `message`, `name`) VALUES
 (10, 'postal', 'Please enter a valid Postal Code.', 'Postal Code'),
 (11, 'ssn', 'Please enter a valid Social Securit Number.', 'SSN'),
 (12, 'url', 'Please enter a valid URL.', 'Url');
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
