@@ -1,6 +1,12 @@
 <?php  
 class CformHelper extends AppHelper { 
-    public $helpers = array('Html', 'Form');
+    public $helpers = array('Html', 'Form', 'Javascript');
+    
+    public function beforeRender() {
+        $this->Javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js'), false);
+        $view =& ClassRegistry::getObject('view');
+        $view->addScript($this->Html->css(array('/cforms/css/fancy_white', '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom')));
+    }
     
 /**
  * used in generating form fieldsets
@@ -16,8 +22,8 @@ class CformHelper extends AppHelper {
  * @access public
  */   
     function js(){
-        $out =
-        "<script type='text/javascript'>
+        $js =
+        "
     $(function() {
     $('.dependent').each(function(){
         var dependsName = $(this).attr('dependson');
@@ -38,10 +44,9 @@ class CformHelper extends AppHelper {
                 }});
             });
         });
-        </script>        
         ";
         
-        return $out;
+        $this->Javascript->codeBlock($js, array('inline' => false));
     }
 
 /**
@@ -53,10 +58,17 @@ class CformHelper extends AppHelper {
  * @access public
  */      
     function insert($formData){
+        $this->js();
         $out = '';
 
         if(!empty($formData['Cform'])){
-            $out .= $this->Form->create('Form', array('url' => '/' . $this->params['url']['url'], 'class' => 'cform'));
+            if(!empty($formData['Cform']['action'])){
+                $action = $formData['Cform']['action'];
+            } else {
+                $action = '/' . $this->params['url']['url'];
+            }
+            
+            $out .= $this->Form->create('Form', array('url' => $action, 'class' => 'cform'));
             $out .= $this->Form->hidden('Cform.id', array('value' => $formData['Cform']['id']));
             $out .= $this->Form->hidden('Cform.submitHere', array('value' => true));
             
@@ -74,9 +86,6 @@ class CformHelper extends AppHelper {
         }
         
         $out .= $this->Form->end('Submit');        
-        
-        $out .= $this->js();
-        
         }
         
         return $this->output($out);

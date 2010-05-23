@@ -180,10 +180,12 @@ class CformComponent extends Object{
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->Controller->view);
 		}
-		$View = new $viewClass($this->Controller);
+		
+                $View = new $viewClass($this->Controller);
                 $View->plugin = 'cforms';
                 
                 $content = $View->element('form', array('formData' => $formData), true);
+                ClassRegistry::removeObject('view');
                 
                 return $content;
 	}
