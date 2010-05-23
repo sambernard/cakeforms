@@ -26,7 +26,7 @@ class Cform extends CformsAppModel {
 		'FormField' => array(
 			'className' => 'Cforms.FormField',
 			'foreignKey' => 'cform_id',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
 			'order' => 'FormField.order',

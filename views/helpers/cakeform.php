@@ -6,6 +6,7 @@ class CakeformHelper extends AppHelper {
         $view =& ClassRegistry::getObject('view');
         if($view){
             $this->Javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js'), false);
+            $this->js();
             $view->addScript($this->Html->css(array('/cforms/css/fancy_white', '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom')));
         }
     }
@@ -60,7 +61,6 @@ class CakeformHelper extends AppHelper {
  * @access public
  */      
     function insert($formData){
-        $this->js();
         if(!($formData['Cform']['submitted'] == true && $formData['Cform']['hide_after_submission'] == true)){
             $out = '';
     

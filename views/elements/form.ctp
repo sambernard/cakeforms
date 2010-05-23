@@ -1,1 +1,1 @@
-<?php $cakeform->insert($formData); ?>
+<?php echo $cakeform->insert($formData); ?>

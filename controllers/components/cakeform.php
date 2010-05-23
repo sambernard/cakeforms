@@ -249,12 +249,18 @@ class CakeformComponent extends Object{
                                     $this->Controller->data['Submission']['email'] = $this->Controller->data['Form']['email'];
                             }
                             $this->Controller->data['Submission']['cform_id'] = $id;
+                            
+                            App::import('Model', 'Cforms.Submission');
+                            $this->Submission = new Submission;                            
+                            
+                            $this->Submission->Cform->id = $id;
+                            $formName = $this->Submission->Cform->field('name');
+                            
+                            $this->Controller->data['Submission']['name'] = $formName;
                             $this->Controller->data['Submission']['ip'] = ip2long($this->RequestHandler->getClientIP());
                             unset($this->Controller->data['Cform']['id']);
                             unset($this->Controller->data['Cform']['submitHere']);
                             
-                            App::import('Model', 'Cforms.Submission');
-                            $this->Submission = new Submission;
                             if($this->Submission->submit($this->Controller->data)){
                                 $this->send($this->formData['Cform'], $this->Controller->data);
                                 
