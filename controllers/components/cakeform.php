@@ -1,9 +1,8 @@
 <?php
-
-class CformComponent extends Object{
+class CakeformComponent extends Object{
     
         public $components = array('RequestHandler', 'Email');
-        
+
 /**
  * Holds the data required to build the form
  *
@@ -12,17 +11,6 @@ class CformComponent extends Object{
  */
         public $formData;
         
-/**
- * If set to true, component will search for {cform_ID} in the
- * viewVar(below) where ID is the id of the form to show
- *
- * Overridden with the controller beforeFilter() or Component init
- *
- * @var boolean
- * @access public
- */        
-        public $autoParse = false;
-
 /**
  * Holds the path to the view variable  in $this->Controller->viewVars
  * which contains the {cform_ID} tag
@@ -37,14 +25,36 @@ class CformComponent extends Object{
  */        
         public $viewVar = null;
         
+        
 /**
- * Pointer to view variable which contains content to check for
- * {cform_ID} tag
+ * Which action/views the component will look for
+ * the {cform_ID} tag and replace it with the form,
+ * where ID is the id of the form to show
+ *
+ * Overridden with the controller beforeFilter() or Component init
  *
  * @var string
  * @access public
  */        
+        public $actions = array();
+        
+        
+/**
+ * Pointer to view variable which contains content to check for
+ * {cform_ID} tag
+ *
+ * @var array
+ * @access public
+ */        
         public $content;
+
+/**
+ * Whether or not the form has been successfuly submitted
+ *
+ * @var boolean
+ * @access public
+ */
+        public $submitted = false;
         
 /**
  * Sets Controller values, loads Cform.Form model
@@ -67,9 +77,12 @@ class CformComponent extends Object{
                         $this->viewVar = $settings['viewVar'];
                 }
                 
-                if(!empty($settings['autoParse'])){
-                        $this->autoParse = $settings['autoParse'];
-                }                
+                if(!empty($settings['actions'])){
+                        if(is_string($settings['actions'])){
+                                $settings['actions'] = array($settings['actions']);
+                        }
+                        $this->actions = $settings['actions'];
+                }
         }
  
 /**
@@ -80,7 +93,7 @@ class CformComponent extends Object{
  */         
         function startup(&$controller){          
             $this->Controller = &$controller; 
-            $this->Controller->helpers[] = "Cforms.Cform";
+            $this->Controller->helpers[] = "Cforms.Cakeform";
         
             if(!empty($this->Controller->data['Cform']['submitHere']) && $this->Controller->data['Cform']['id']){
                    $this->submit();
@@ -96,7 +109,7 @@ class CformComponent extends Object{
         function beforeRender(&$controller){          
             $this->Controller = &$controller;
             
-            if($this->autoParse == true && !empty($this->viewVar)){
+            if(!empty($this->viewVar) && in_array($this->Controller->action, $this->actions)){
                         if($this->getContent()){
                                 $this->content = $this->insertForm($this->content);
                         }
@@ -135,10 +148,10 @@ class CformComponent extends Object{
         function insertForm($content){
                 $newcontent = '';
                 //$pattern = '/({cform_)([0-9])*[}]/';
-                
-                $start = strpos($this->content, '{cform_');
-                $end = strpos($this->content, '}', $start);
-                $replace = substr($this->content, $start, $end + 1 - $start);
+
+                $start = strpos($content, '{cform_');
+                $end = strpos($content, '}', $start);
+                $replace = substr($content, $start, $end + 1 - $start);
                 
                 if(strlen($replace) > 8){ #make sure it at least the length of {cform_1}
                         $length = strlen($replace) - 2;
@@ -147,15 +160,15 @@ class CformComponent extends Object{
                         $formId = explode('_', $formId);
                         $formId = $formId[1];
                         
-                        $formData = $this->Form->buildSchema($formId);
+                        $formData = $this->loadForm($formId);
                         
                         if(!empty($formData)){
                                 $newcontent = $this->__renderForm($formData);
                         }
-                }
-                
-                if(!empty($newcontent)){
-                        $content = str_replace($replace, $newcontent, $content);
+
+                        if(!empty($newcontent)){
+                                $content = str_replace($replace, $newcontent, $content);
+                        }                        
                 }
                 
                 return $content;
@@ -183,8 +196,8 @@ class CformComponent extends Object{
 		
                 $View = new $viewClass($this->Controller);
                 $View->plugin = 'cforms';
-                
                 $content = $View->element('form', array('formData' => $formData), true);
+                
                 ClassRegistry::removeObject('view');
                 
                 return $content;
@@ -198,9 +211,11 @@ class CformComponent extends Object{
  * @access public
  */                
         function loadForm($id){
-            if(empty($this->formData)){
+            if(empty($this->formData) || $this->formData['Cform']['id'] != $id){
                 $this->formData = $this->Form->buildSchema($id);
             }
+            
+            $this->formData['Cform']['submitted'] = $this->submitted;
             
             return $this->formData;
         }
@@ -225,6 +240,8 @@ class CformComponent extends Object{
 
             $this->Form->set($validate);
             if($this->Form->validates()){
+                    $this->submitted = true;
+                    $this->formData['Cform']['submitted'] = true;
                     if(!empty($this->formData['Cform']['next'])){
                             $this->Session->write('Cform.form.' .  $id, $this->Controller->data['Cform']);
                     } else {

@@ -17,9 +17,9 @@ Instructions for Use
     *Adding validation- the standatd rules are included- if you want to edit the message displayed go to /admin/cforms/validation_rules/
 
 **Displaying Forms:
-1)  Add 'Cforms.Cform' to your list of components
-2)  Call '$this->set('formData', $this->Cform->loadForm($formId))' in your controller- $formId is the id of your form
-3)  Call 'echo $cform->insert($formData)' in your view
+1)  Add 'Cforms.Cakeform' to your list of components
+2)  Call '$this->set('formData', $this->Cakeform->loadForm($formId))' in your controller- $formId is the id of your form
+3)  Call '$cform->insert($formData)' in your view
 4)  The component will take care of catching the form data- by default the form action is set to the current route. The default config will send the contents of the form to the email specified in the form config, and store the results in the database, which can be viewed at /admin/cforms/submissions/ 
 
 **Form Config Options:

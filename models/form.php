@@ -46,15 +46,13 @@ class Form extends CformsAppModel {
 				);
 				
 				if(!empty($field['ValidationRule'])){
-					if(!empty($field['options'])){
-						foreach($field['ValidationRule'] as $rule){
-							$validate[$field['name']][$rule['rule']] = array(
-								'rule' => $rule['rule'],
-								'message' => $rule['message'],
-								'allowEmpty' => ($field['required']?0:1)
-								
-							);
-						}
+					foreach($field['ValidationRule'] as $rule){
+						$validate[$field['name']][$rule['rule']] = array(
+							'rule' => $rule['rule'],
+							'message' => $rule['message'],
+							'allowEmpty' => ($field['required']?false:true)
+							
+						);
 					}
 				} elseif($field['required']){
 					$validate[$field['name']] = array('notEmpty');
@@ -72,7 +70,7 @@ class Form extends CformsAppModel {
 		
 		$this->validate = $validate;
 		$this->_schema = $schema;
-		$this->dependsOn = $dependsOn;
+		$this->dependsOn = (isset($dependsOn)?$dependsOn:array());
 		return $cform;
 	}
 

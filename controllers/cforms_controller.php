@@ -56,6 +56,10 @@ class CformsController extends CformsAppController {
 		$this->Session->setFlash(__('The Form could not be deleted. Please, try again.', true));
 		$this->redirect(array('action' => 'index'));
 	}
+	
+	function admin_list_cforms(){
+		$this->set('cforms', $this->Cform->find('list'));
+	}
 
 }
 ?>

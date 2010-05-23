@@ -1,7 +1,7 @@
 <?php
 
 class CformsAppController extends AppController {
-    public $components = array('RequestHandler');
+    public $components = array('RequestHandler', 'Cforms.Cakeform');
     public $helpers = array('AutoJavascript');
     
     

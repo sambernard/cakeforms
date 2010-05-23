@@ -1,11 +1,13 @@
 <?php  
-class CformHelper extends AppHelper { 
+class CakeformHelper extends AppHelper { 
     public $helpers = array('Html', 'Form', 'Javascript');
     
     public function beforeRender() {
-        $this->Javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js'), false);
         $view =& ClassRegistry::getObject('view');
-        $view->addScript($this->Html->css(array('/cforms/css/fancy_white', '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom')));
+        if($view){
+            $this->Javascript->link(array('/cforms/js/jquery-1.4.2.min.js', '/cforms/js/jquery-ui-1.8.1.custom.min.js'), false);
+            $view->addScript($this->Html->css(array('/cforms/css/fancy_white', '/cforms/css/ui-lightness/jquery-ui-1.8.1.custom')));
+        }
     }
     
 /**
@@ -59,36 +61,40 @@ class CformHelper extends AppHelper {
  */      
     function insert($formData){
         $this->js();
-        $out = '';
-
-        if(!empty($formData['Cform'])){
-            if(!empty($formData['Cform']['action'])){
-                $action = $formData['Cform']['action'];
-            } else {
-                $action = '/' . $this->params['url']['url'];
-            }
-            
-            $out .= $this->Form->create('Form', array('url' => $action, 'class' => 'cform'));
-            $out .= $this->Form->hidden('Cform.id', array('value' => $formData['Cform']['id']));
-            $out .= $this->Form->hidden('Cform.submitHere', array('value' => true));
-            
-            $out .= '<span class="reqtxt">Indicates a required field.</span>';
-            
-            if(isset($formData['FormField'])){
-                foreach($formData['FormField'] as $field){
-                    $out .= $this->field($field);
+        if(!($formData['Cform']['submitted'] == true && $formData['Cform']['hide_after_submission'] == true)){
+            $out = '';
+    
+            if(!empty($formData['Cform'])){
+                if(!empty($formData['Cform']['action'])){
+                    $action = $formData['Cform']['action'];
+                } else {
+                    $action = '/' . $this->params['url']['url'];
                 }
+                
+                $out .= $this->Form->create('Form', array('url' => $action, 'class' => 'cform'));
+                $out .= $this->Form->hidden('Cform.id', array('value' => $formData['Cform']['id']));
+                $out .= $this->Form->hidden('Cform.submitHere', array('value' => true));
+                
+                $out .= '<span class="reqtxt">Indicates a required field.</span>';
+                
+                if(isset($formData['FormField'])){
+                    foreach($formData['FormField'] as $field){
+                        $out .= $this->field($field);
+                    }
+                }
+            
+            
+            if($this->openFieldset == true){
+                    $out .= "</fieldset>";
             }
-        
-        
-        if($this->openFieldset == true){
-                $out .= "</fieldset>";
+            
+            $out .= $this->Form->end('Submit');        
+            }
+            
+            return $this->output($out);
+            
         }
-        
-        $out .= $this->Form->end('Submit');        
-        }
-        
-        return $this->output($out);
+        return $this->output('');
     }
 
 /**
