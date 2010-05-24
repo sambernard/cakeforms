@@ -1,4 +1,4 @@
-New "<?php echo $formData['name'];?>" Submission
+New "<?php echo $response['Cform']['name'];?>" Submission
 Submitted On <?php echo date('m/d/y \a\t h:i A'), "\n";?>
 Page: <?php echo $response['Submission']['page'];?>
 IP: <?php echo long2ip($response['Submission']['ip']);?>

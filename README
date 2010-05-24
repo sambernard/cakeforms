@@ -17,10 +17,26 @@ Instructions for Use
     *Adding validation- the standatd rules are included- if you want to edit the message displayed go to /admin/cforms/validation_rules/
 
 **Displaying Forms:
+Forms can either be displayed by editing your action/template or they can be displayed inline(such as in the middle of page content).
+Inline forms add to the overhead of the pageload(because of the extra work that goes into rendering the form);
+
+-=Inline Forms=-
+1)  Add 'Cforms.Cakeform' to your list of components
+2)  The Component must be configured in the $components array-
+3)  Add {cform_ID} to the content of your page(or wherever)
+
+-=Other Forms=-
 1)  Add 'Cforms.Cakeform' to your list of components
 2)  Call '$this->set('formData', $this->Cakeform->loadForm($formId))' in your controller- $formId is the id of your form
 3)  Call '$cform->insert($formData)' in your view
-4)  The component will take care of catching the form data- by default the form action is set to the current route. The default config will send the contents of the form to the email specified in the form config, and store the results in the database, which can be viewed at /admin/cforms/submissions/ 
+4)  The component will take care of catching the form data- by default the form action is set to the current route. The default config will send the contents of the form to the email specified in the form config, and store the results in the database, which can be viewed at /admin/cforms/submissions/
+
+**Processing form data
+*(optional) create the function beforeCformsSave(&$data) in your controller/AppController- it is only called after the data has been validated but before
+it is saved to the db. This allows you to do any data massaging logic you may need(such as getting rid of things you don't want saved in the db or credit card processing).
+This function must return true or the data will not be saved in the DB.
+*(optional) create the function afterCformsSave($data) in your controller/AppController- it is only called after the data has been validated and
+saved to the database
 
 **Form Config Options:
 *Alternative Form Action: Modifies the action of the form... you lose any validation/processing of the data _unless_ the cform

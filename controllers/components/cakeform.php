@@ -65,6 +65,7 @@ class CakeformComponent extends Object{
  */        
         function initialize(&$controller, $settings = array()) {
                 $this->Controller =& $controller;
+                
                 $this->Form = ClassRegistry::init('Cforms.Form');;
                 
                 if(!empty($settings['email'])){
@@ -107,8 +108,7 @@ class CakeformComponent extends Object{
  * @access public
  */          
         function beforeRender(&$controller){          
-            $this->Controller = &$controller;
-            
+            $this->Controller = &$controller;            
             if(!empty($this->viewVar) && in_array($this->Controller->action, $this->actions)){
                         if($this->getContent()){
                                 $this->content = $this->insertForm($this->content);
@@ -259,11 +259,26 @@ class CakeformComponent extends Object{
                             $this->Controller->data['Submission']['name'] = $formName;
                             $this->Controller->data['Submission']['ip'] = ip2long($this->RequestHandler->getClientIP());
                             $this->Controller->data['Submission']['page'] = $this->Controller->here;
-                            unset($this->Controller->data['Cform']['id']);
-                            unset($this->Controller->data['Cform']['submitHere']);
+
                             
-                            if($this->Submission->submit($this->Controller->data)){
-                                $this->send($this->formData['Cform'], $this->Controller->data);
+                            $controllerMethods = get_class_methods($this->Controller);
+                            
+                            $saveToDb = true;
+                            
+                            if(in_array('beforeCformsSave', $controllerMethods))
+                            {
+                                $saveToDb = $this->Controller->beforeCformsSave($this->Controller->data);
+                            }                            
+                            
+                            if($saveToDb && $this->Submission->submit($this->Controller->data)){
+                                $this->Controller->data['Cform'] = $this->formData['Cform'];
+                                
+                                if(in_array('afterCformsSave', $controllerMethods))
+                                {
+                                        $this->Controller->afterCformsSave($this->Controller->data);
+                                } else {
+                                        $this->send($this->Controller->data);
+                                }                              
                                 
                                 if(!empty($this->formData['Cform']['redirect'])){
                                         $this->redirect($this->formData['Cform']['redirect']);
@@ -284,23 +299,23 @@ class CakeformComponent extends Object{
  * @return bool true if form is successfuly sent
  * @access public
  */           
-	function send($formData, $response){
-                if(!empty($formData['recipient'])){
-                        $this->Email->to = $formData['recipient'];
+	function send($response){
+                if(!empty($response['Cform']['recipient'])){
+                        $this->Email->to = $response['Cform']['recipient'];
                 }
                 
                 if(empty($this->Email->from)){
                         $this->Email->from = $this->Email->to;
                 }
                 
-		$this->Email->subject = "New '{$formData['name']}' Submission";
+		$this->Email->subject = "New '{$response['Cform']['name']}' Submission";
 		$this->Email->sendAs = 'both';
 
                 $plugin = $this->Controller->plugin;
                 $this->Controller->plugin = 'cforms';
 		$this->Email->template = 'submission';
                 
-                $this->Controller->set(compact('formData', 'response'));
+                $this->Controller->set('response', $response);
 		$success = $this->Email->send();
                 $this->Controller->plugin = $plugin;
                 
