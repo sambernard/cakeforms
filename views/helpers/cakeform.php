@@ -123,6 +123,10 @@ class CakeformHelper extends AppHelper {
                         
                         if(!empty($field['label'])){
                                 $options['label'] = $field['label'];
+				
+				if($field['type'] == 'radio'){
+				    $options['legend'] = $field['label'];
+				}
                         }
                         
                         if(!empty($field['default']) && empty($this->data['Form'][$field['name']])){
