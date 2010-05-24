@@ -16,7 +16,7 @@ $(document).ready(function() {
 		data,
 		function(response){
 			if(response){
-				$.get('/admin/cforms/form_fields/get_row/' + response,
+				$.get(base + '/admin/cforms/form_fields/get_row/' + response,
 				      function(data){
 					$("#sortable tbody").append(data);
 				      });
@@ -76,11 +76,10 @@ $(document).ready(function() {
 		var data = $('input[name*="data[FormField]"][name*="[id]"]').serialize();
 		
 		$.post(
-		'<?php echo $this->base;?>/admin/cforms/form_fields/sort/',
+		base + '/admin/cforms/form_fields/sort/',
 		data,
 		function(response){
 			if(response == 'success'){
-				//$('input[name*="data[FormField]"][name*="[form_id]"]').remove();
 			}
 		}
 		);		
@@ -88,7 +87,7 @@ $(document).ready(function() {
 	
 	$('select[id*="FormField"][id*="Type"]').live('change', function(){
 		var value = $(this).val();
-		var select = <?php echo json_encode($multiTypes);?>;
+		var select = ['checkbox', 'select', 'radio'];
 
 		if(jQuery.inArray(value, select) > -1){
 			$(this).closest('td').children('div.text').show();
@@ -103,7 +102,7 @@ $(document).ready(function() {
 		clicked = $(this);
 		if(fieldId){
 			$.post(
-			'/admin/cforms/form_fields/delete/' + fieldId,
+			base + '/admin/cforms/form_fields/delete/' + fieldId,
 			function(response){
 				if(response == 'success'){
 					clicked.closest('tr').remove();	

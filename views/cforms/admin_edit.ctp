@@ -1,4 +1,8 @@
-<?php echo $javascript->link('/cforms/js/cforms/admin_edit.js', true);?>
+<?php
+echo $javascript->codeBlock('
+			base = "' . $this->base. '";
+			');
+echo $javascript->link('/cforms/js/cforms/admin_edit.js', true);?>
 <div class="cforms form">
 <?php echo $form->create('Cform');?>
 	<?php
